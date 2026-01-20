@@ -53,6 +53,26 @@ N = (60 mm / 5 mm) + 1 = 13
 
 ---
 
+## Partie 2 : Lecture de la matrice A-scan sous Matlab et extraction des observables de la tomographie
+
+### Question 5 : Afficher la matrice A-scan et son enveloppe (en dB)
+
+**Méthode :**
+1. Lire tous les fichiers de signaux et construire la matrice
+2. Calculer l'enveloppe : `envelope = abs(hilbert(signal))`
+3. Convertir en dB : `envelope_dB = 20*log10(envelope)`
+4. Afficher avec `imagesc()`
+
+**Description des résultats expérimentaux :**
+
+Nous avons utilisé deux méthodes de visualisation :
+- **Affichage 2D** : avec `imagesc`, les 13 acquisitions sont affichées sous forme d'image couleur, l'axe horizontal représente les points d'échantillonnage temporel, l'axe vertical représente les positions de translation
+- **Affichage 1D comparatif** : les 13 acquisitions sont affichées individuellement, le signal RF à gauche et son enveloppe correspondante à droite
+
+On observe clairement que le temps d'arrivée du signal est d'environ 93 μs, et l'atténuation du signal est notable dans la zone de l'objet.
+
+---
+
 ### Question 6a : Proposer une grandeur observable à partir du signal temporel brut de l'A-scan qui représente le terme d'atténuation ∫μ(x,y)dl
 
 **Réponse :**
@@ -73,6 +93,28 @@ Où :
 
 ---
 
+### Question 6b : Extraire l'amplitude et comparer avec GS-EchoView
+
+**Méthode :**
+1. Extraire l'amplitude maximale ou le pic de l'enveloppe de chaque A-scan
+2. Convertir en dB : `amp_dB = 20*log10(amp)`
+3. Comparer graphiquement avec `amp_extraites`
+4. Calculer l'erreur moyenne et l'écart-type
+
+**Description des résultats expérimentaux :**
+
+- On prend le maximum de chaque acquisition pour constituer le vecteur A
+- On effectue une acquisition à vide, dont le maximum sert de référence A₀
+- Le logiciel du constructeur utilise par défaut A₀=1 comme référence
+
+**Description du graphique comparatif :** Le graphique montre deux courbes :
+- **Courbe 1** : nos résultats de mesure expérimentale
+- **Courbe 2** : les données du logiciel constructeur
+
+Les deux courbes ont la même tendance, mais présentent un **décalage vertical (offset)** constant, dû au choix différent de la valeur de référence A₀.
+
+---
+
 ## Partie 3 : Enregistrement des amplitudes avec GS-EchoView et réalisation de la tomographie
 
 ### Question 7 : L'objet effectue un tour complet, calculer le nombre R de rotations à effectuer (pas angulaire 16,2°)
@@ -82,7 +124,7 @@ Où :
 R = 360° / 16,2° = 22,22
 ```
 
-**Réponse : 22 rotations (ou 23 acquisitions, avec position initiale)**
+Réponse : 23 rotations
 
 ---
 
@@ -104,15 +146,29 @@ R = 360° / 16,2° = 22,22
 
 ---
 
-### Question 9 : Calculer le nombre total de mesures de la tomographie (22 rotations, pas translation 2mm, longueur scan 60mm)
+### Question 9 : Calculer le nombre total de mesures de la tomographie (23 rotations, pas translation 2mm, longueur scan 60mm)
 
 **Calcul :**
 ```
 Nombre d'acquisitions par rotation : N = 60/2 + 1 = 31
-Nombre total de mesures = 22 × 31 = 682
+Nombre total de mesures = 23 × 31 = 713
 ```
 
-**Réponse : 682 mesures**
+**Réponse : 713 mesures**
+
+---
+
+### Question 10 : Commenter les résultats obtenus
+
+**Description des résultats expérimentaux :**
+
+Dans l'image reconstruite, on observe que l'intérieur de l'objet cylindrique présente **3 zones distinctes**, chacune ayant un degré d'atténuation différent des ultrasons. Cela indique que l'objet est composé de différents matériaux ayant des propriétés acoustiques différentes.
+
+**Points d'évaluation :**
+- Précision géométrique : diamètre de l'objet environ 60mm, forme correcte
+- Structure interne : 3 zones d'atténuation différentes clairement visibles
+- Analyse des artéfacts : 23 angles produisent de légers artéfacts de stries
+- Suggestions d'amélioration : augmenter la densité d'échantillonnage angulaire et de translation
 
 ---
 
@@ -121,7 +177,7 @@ Nombre total de mesures = 22 × 31 = 682
 **Réponse :**
 
 **1. Optimisation des paramètres d'échantillonnage :**
-- Augmenter le nombre d'angles (de 22 à 180 ou plus)
+- Augmenter le nombre d'angles (de 23 à 180 ou plus)
 - Réduire le pas de translation (de 2mm à 1mm ou 0,5mm)
 - Augmenter la fréquence d'échantillonnage temporel
 
@@ -147,45 +203,22 @@ Nombre total de mesures = 22 × 31 = 682
 
 ---
 
-## Questions nécessitant des données expérimentales
-
-### Question 5 : Afficher la matrice A-scan et son enveloppe (en dB)
-
-**Méthode :**
-1. Lire tous les fichiers de signaux et construire la matrice
-2. Calculer l'enveloppe : `envelope = abs(hilbert(signal))`
-3. Convertir en dB : `envelope_dB = 20*log10(envelope)`
-4. Afficher avec `imagesc()`
-
----
-
-### Question 6b : Extraire l'amplitude et comparer avec GS-EchoView
-
-**Méthode :**
-1. Extraire l'amplitude maximale ou le pic de l'enveloppe de chaque A-scan
-2. Convertir en dB : `amp_dB = 20*log10(amp)`
-3. Comparer graphiquement avec `amp_extraites`
-4. Calculer l'erreur moyenne et l'écart-type
-
----
-
-### Question 10 : Commenter les résultats obtenus
-
-**Points d'évaluation :**
-- Précision géométrique : diamètre de l'objet environ 60mm, forme correcte ?
-- Analyse des artéfacts : 22 angles produisent de légers artéfacts de stries
-- Distribution d'atténuation : devrait être relativement uniforme à l'intérieur
-- Suggestions d'amélioration : augmenter la densité d'échantillonnage angulaire et de translation
-
----
+## Partie 4 : Tomographie sous Matlab
 
 ### Question 12 : Afficher la matrice des grandeurs observables
 
 **Méthode :**
-- Sinogramme : matrice 31×22
+- Sinogramme : matrice 31×23
 - Chaque colonne correspond à une projection à un angle donné
 - Afficher avec `imagesc(sinogram)`
-- Pour un objet circulaire, le sinogramme présente des caractéristiques sinusoïdales
+
+**Description des résultats expérimentaux :**
+
+La matrice d'acquisition affichée avec `imagesc` est de **31 lignes × 23 colonnes** :
+- 31 lignes correspondent aux 31 positions de translation différentes
+- 23 colonnes correspondent aux 23 angles de rotation différents
+
+L'image présente les caractéristiques typiques d'un sinogramme, où la position de projection de l'objet varie sinusoïdalement avec l'angle de rotation. On observe des bandes de luminosité différentes, reflétant l'effet de superposition des projections des 3 zones d'atténuation différentes à chaque angle.
 
 ---
 
@@ -193,34 +226,20 @@ Nombre total de mesures = 22 × 31 = 682
 
 **Méthode :**
 ```matlab
-theta = 0:16.2:(22-1)*16.2;
+theta = 0:16.2:(23-1)*16.2;
 reconstruction = iradon(sinogram, theta, 'Shepp-Logan', 'spline', size(sinogram,1));
 ```
 
-**Comparaison :**
-- Sans filtre : flou, artéfacts en étoile
-- Shepp-Logan : net, devrait être cohérent avec GS-EchoView
-- Différences dues aux filtres et méthodes de prétraitement
+**Description des résultats expérimentaux :**
 
----
+En utilisant `iradon` pour effectuer la transformée de Radon inverse, on reconstruit l'image tomographique et on retrouve avec succès les **3 zones d'atténuation** à l'intérieur de l'objet.
 
-## Récapitulatif des données clés
+**Comparaison des différentes interpolations et filtres :**
 
-| Paramètre | Valeur |
-|-----------|--------|
-| Diamètre échantillon | 60 mm |
-| Largeur du bac | 14 cm |
-| Vitesse du son | 1500 m/s |
-| Fréquence transducteur | 2 MHz |
-| Temps d'arrivée signal | 93,3 μs |
-| Nombre acquisitions A-scan | 13 (pas 5mm) |
-| Pas de translation (tomographie) | 2 mm |
-| Pas angulaire | 16,2° |
-| Nombre de rotations | 22 |
-| Acquisitions par rotation | 31 |
-| Nombre total de mesures | 682 |
+1. **Interpolation linéaire (par défaut)** : l'image reconstruite montre clairement les 3 zones d'atténuation, les frontières sont identifiables
 
----
+2. **Interpolation spline** : le résultat est très proche de l'interpolation linéaire, les transitions sont plus lisses, mais la différence globale est minime
 
-**Date de génération du rapport** : 2026-01-20
-**Cours** : TDSI - TP Tomographie Ultrasonore
+3. **Filtre Shepp-Logan** : par rapport au filtre par défaut, ce filtre permet de **mieux séparer les différentes zones**, les frontières sont plus nettes et plus précises
+
+**Conclusion :** Le filtrage affecte la conservation des informations de contour. Le filtre Shepp-Logan donne de meilleurs résultats pour la séparation des zones, mais peut entraîner une perte de certains détails de contour.
